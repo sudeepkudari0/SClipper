@@ -4,10 +4,16 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  clipper: 'link:'
+
 importers:
 
   .:
     dependencies:
+      clipper:
+        specifier: 'link:'
+        version: 'link:'
       commander:
         specifier: ^13.1.0
         version: 13.1.0

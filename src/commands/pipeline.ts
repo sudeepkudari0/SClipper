@@ -26,7 +26,9 @@ import {
 import { exportPassingRenders, type ExportRecord } from "../export/export.js";
 import type { TranscriptSegment } from "../llm/provider.js";
 import type { PlanFacts } from "../llm/prompts.js";
+import { buildDropCutMontage } from "../render/montage.js";
 import { renderClipVariants, type RenderManifest } from "../render/render.js";
+import { downloadPexelsClips } from "../sources/pexels.js";
 import { validateRender, type ValidationReport } from "../validate/checks.js";
 import { resolveCommandContext, type GlobalOptions } from "./context.js";
 
@@ -596,6 +598,7 @@ export async function runCommand(
     top?: number;
     limit?: number;
     fetch?: boolean;
+    stock?: string;
     variants?: number;
     reframe?: "auto" | "center" | "motion" | "none";
     slowmo?: boolean;
@@ -628,6 +631,33 @@ export async function runCommand(
     await execa("sh", ["-c", fetchTpl.replaceAll("{localDir}", localDir)], {
       stdio: "inherit",
     });
+  }
+
+  if (cmdOpts.stock) {
+    const stockDir = path.resolve(ctx.profile.sources.localDir, "_stock");
+    const stockFiles = await downloadPexelsClips({
+      query: cmdOpts.stock,
+      outDir: stockDir,
+      count: 4,
+      orientation: "portrait",
+    });
+    if (stockFiles.length > 0) {
+      const montagePath = await buildDropCutMontage({
+        inputFiles: stockFiles,
+        outDir: path.resolve(ctx.profile.sources.localDir),
+        width: ctx.profile.output.width,
+        height: ctx.profile.output.height,
+        fps: ctx.profile.output.fps,
+        totalDurationSec: Math.max(
+          ctx.profile.output.minSeconds,
+          ctx.profile.output.targetSeconds[0],
+        ),
+        dropAtSec: ctx.profile.output.dropAtSec ?? 3.0,
+      });
+      if (!ctx.json) {
+        console.log(pc.dim(`Created Pexels drop-cut montage: ${montagePath}`));
+      }
+    }
   }
 
   const target = inputPath ?? ctx.profile.sources.localDir;

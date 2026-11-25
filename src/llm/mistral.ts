@@ -136,7 +136,14 @@ export class MistralClient implements LLMProvider, TranscriptionProvider {
         });
       });
 
-      if (res.ok) return res;
+      if (res.ok) {
+        const remReq = res.headers.get("x-ratelimit-remaining-req-minute");
+        if (remReq === "0") {
+          // Next call would hit 429 on 2-RPM free tier; push lastCallAt forward
+          this.lastCallAt = Date.now() + 30_000;
+        }
+        return res;
+      }
 
       const status = res.status;
       const bodyText = await res.text().catch(() => "");
@@ -146,8 +153,11 @@ export class MistralClient implements LLMProvider, TranscriptionProvider {
 
       if ((status === 429 || status >= 500) && attempt < this.maxAttempts) {
         const retryAfter = parseRetryAfterMs(res.headers.get("retry-after"));
-        const baseBackoff = Math.min(30_000, 1000 * Math.pow(2, attempt - 1));
-        const jitter = Math.floor(Math.random() * 400);
+        const baseBackoff =
+          status === 429
+            ? Math.min(62_000, 15_000 * attempt)
+            : Math.min(30_000, 1000 * Math.pow(2, attempt - 1));
+        const jitter = Math.floor(Math.random() * 500);
         const delay = retryAfter !== null ? Math.max(retryAfter, 250) : baseBackoff + jitter;
         await sleep(delay);
         continue;

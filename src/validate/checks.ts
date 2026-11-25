@@ -29,7 +29,7 @@ async function detectBlackBars(
 ): Promise<{ hasBars: boolean; detail: string }> {
   const res = await execa(
     "ffmpeg",
-    ["-i", renderPath, "-t", "4", "-vf", "cropdetect=24:2:0", "-f", "null", "-"],
+    ["-i", renderPath, "-t", "4", "-vf", "cropdetect=10:2:0", "-f", "null", "-"],
     { reject: false },
   );
   const matches = [...res.stderr.matchAll(/crop=(\d+):(\d+):(\d+):(\d+)/g)];

@@ -19,6 +19,7 @@ import {
   validateCommand,
 } from "./commands/pipeline.js";
 import { doctorCommand, modelsCommand } from "./commands/system.js";
+import { montageCommand, stockCommand } from "./commands/stock.js";
 
 const program = new Command();
 
@@ -208,6 +209,7 @@ program
   .option("--top <n>", "Keep top N clips by action score")
   .option("--limit <n>", "Limit number of clips processed")
   .option("--fetch", "Run sources.fetch before ingesting")
+  .option("--stock <query>", "Download Pexels stock B-roll and build a drop-cut montage")
   .option("--variants <n>", "Variants per clip", "1")
   .option("--reframe <mode>", "Reframe mode: auto | center | motion | none")
   .option("--slowmo", "Enable slow-mo around peak")
@@ -225,6 +227,7 @@ program
         top?: string;
         limit?: string;
         fetch?: boolean;
+        stock?: string;
         variants?: string;
         reframe?: "auto" | "center" | "motion" | "none";
         slowmo?: boolean;
@@ -243,6 +246,7 @@ program
           top: cmdOpts.top ? Number(cmdOpts.top) : undefined,
           limit: cmdOpts.limit ? Number(cmdOpts.limit) : undefined,
           fetch: cmdOpts.fetch,
+          stock: cmdOpts.stock,
           variants: cmdOpts.variants ? Number(cmdOpts.variants) : 1,
           reframe: cmdOpts.reframe,
           slowmo: cmdOpts.slowmo,
@@ -256,6 +260,51 @@ program
         },
         globals(),
       ),
+  );
+
+program
+  .command("stock")
+  .description("Download free stock B-roll clips from Pexels")
+  .requiredOption("--query <text>", "Search query (e.g. 'night drive rain')")
+  .option("--count <n>", "Number of clips to download", "4")
+  .option("--orientation <dir>", "portrait | landscape | square", "portrait")
+  .option("--out <dir>", "Output directory")
+  .action(
+    async (cmdOpts: {
+      query: string;
+      count?: string;
+      orientation?: "portrait" | "landscape" | "square";
+      out?: string;
+    }) => {
+      await stockCommand(
+        {
+          query: cmdOpts.query,
+          count: Number(cmdOpts.count ?? 4),
+          orientation: cmdOpts.orientation,
+          out: cmdOpts.out,
+        },
+        globals(),
+      );
+    },
+  );
+
+program
+  .command("montage")
+  .description("Stitch stock clips into a drop-cut vertical montage")
+  .option("--dir <path>", "Directory of input clips (default sources/<campaign>/_stock)")
+  .option("--drop-at <sec>", "First cut/drop timestamp in seconds")
+  .option("--duration <sec>", "Target total duration in seconds")
+  .action(
+    async (cmdOpts: { dir?: string; dropAt?: string; duration?: string }) => {
+      await montageCommand(
+        {
+          dir: cmdOpts.dir,
+          dropAt: cmdOpts.dropAt ? Number(cmdOpts.dropAt) : undefined,
+          duration: cmdOpts.duration ? Number(cmdOpts.duration) : undefined,
+        },
+        globals(),
+      );
+    },
   );
 
 program

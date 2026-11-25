@@ -27,7 +27,7 @@ watermark:
   opacity: 1.0
   fullDuration: true
 text:
-  hook: { enabled: true, maxChars: 38, topPct: 14, fontFile: null, fontSize: 84, durationSec: 2.2 }
+  hook: { enabled: true, maxChars: 38, topPct: 11, fontFile: null, fontSize: 108, durationSec: 2.0 }
   counter: { enabled: false, label: "SHOT", minConfidence: 0.7 }
   captions: { enabled: false }
 effects:

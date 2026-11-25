@@ -41,11 +41,21 @@ export async function resolveFontName(
     return path.basename(fontFile, path.extname(fontFile));
   }
 
-  const res = await execa("fc-match", ["sans:bold", "-f", "%{family}"], {
-    reject: false,
-  });
-  if (res.exitCode === 0 && res.stdout.trim()) {
-    return res.stdout.trim().split(",")[0].trim();
+  for (const query of [
+    "Anton",
+    "Bebas Neue",
+    "Archivo Black",
+    "Montserrat:style=ExtraBold",
+    "Open Sans:style=ExtraBold",
+    "Noto Sans:style=ExtraBold",
+    "sans:bold",
+  ]) {
+    const res = await execa("fc-match", [query, "-f", "%{family}"], {
+      reject: false,
+    });
+    if (res.exitCode === 0 && res.stdout.trim()) {
+      return res.stdout.trim().split(",")[0].trim();
+    }
   }
   throw new Error(
     "Could not resolve a bold sans-serif font via fc-match. Install a sans-serif font (e.g. noto-fonts or liberation-fonts) or set text.hook.fontFile in profile.yaml.",

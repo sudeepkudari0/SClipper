@@ -2,8 +2,8 @@ name: naya-yeira
 niche: music-promotion
 sources:
   localDir: ./sources/naya-yeira
-  # Optional: download approved clips or your own source videos into {localDir}
-  # fetch: "yt-dlp -P {localDir} <url>"
+  # Pulls approved shorts >=16s from Naya Yeira's YouTube channel (requires yt-dlp on PATH)
+  fetch: 'yt-dlp --match-filter "duration >= 16" --playlist-end 8 -S "res:1080,ext:mp4" -o "{localDir}/artist_%(id)s.%(ext)s" "https://www.youtube.com/@nayayeiraofficial/shorts"'
 models: {}
 output:
   aspect: "9:16"
@@ -12,7 +12,7 @@ output:
   fps: 30
   minSeconds: 15
   maxSeconds: 60
-  targetSeconds: [16, 28]
+  targetSeconds: [22, 28]
   dropAtSec: 3.0         # 0-3s buildup, visual reveal/drop at ~3s, >=12s remaining
   audio: mute            # MUST mute; attach official TikTok/IG sound in-app
   loudnessLUFS: -14
@@ -29,11 +29,11 @@ watermark:
 text:
   hook:
     enabled: true
-    maxChars: 65
-    topPct: 14
+    maxChars: 55
+    topPct: 11
     fontFile: null
-    fontSize: 72
-    durationSec: 3.0
+    fontSize: 108
+    durationSec: 2.1
   counter: { enabled: false, label: "SHOT", minConfidence: 0.7 }
   captions: { enabled: false }
 effects:

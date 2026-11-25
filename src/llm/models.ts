@@ -10,10 +10,10 @@ export const ALL_TASKS: LLMTask[] = [
 ];
 
 export const BUILTIN_DEFAULT_MODELS: Record<LLMTask, string> = {
-  plan: "ministral-14b-2512",
-  moments: "ministral-14b-2512",
+  plan: "ministral-8b-2512",
+  moments: "ministral-8b-2512",
   draft: "ministral-8b-2512",
-  vision: "ministral-14b-2512",
+  vision: "ministral-8b-2512",
   transcribe: "voxtral-mini-latest",
 };
 
