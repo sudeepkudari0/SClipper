@@ -1,0 +1,59 @@
+name: cnpl
+niche: sports-highlights
+sources:
+  localDir: ./sources/cnpl
+  # optional shell template run by `clipper fetch`; {localDir} is substituted. Examples:
+  # fetch: "rclone copy gdrive:CNPL/Match-footage {localDir}"
+  # fetch: "gdown --folder https://drive.google.com/drive/folders/XXXX -O {localDir}"
+models: {}          # optional per-campaign overrides of the task-to-model map, e.g. { plan: "<model id>" }
+output:
+  aspect: "9:16"
+  width: 1080
+  height: 1920
+  fps: 30
+  minSeconds: 8
+  maxSeconds: 60
+  targetSeconds: [12, 25]
+  audio: keep            # keep | mute. Never bake in music (in-app sounds only).
+  loudnessLUFS: -14
+reframe:
+  mode: auto             # auto | center | motion | none
+  allowBlurFill: false   # blurred-background fill and letterboxing are NEVER used unless true
+watermark:
+  file: assets/cnpl_icon.png
+  position: bottom-left
+  marginPct: { x: 4, bottom: 14 }   # keep clear of platform UI
+  widthPct: 14
+  opacity: 1.0
+  fullDuration: true
+text:
+  hook: { enabled: true, maxChars: 38, topPct: 14, fontFile: null, fontSize: 84, durationSec: 2.2 }
+  counter: { enabled: false, label: "SHOT", minConfidence: 0.7 }
+  captions: { enabled: false }
+effects:
+  slowmo: { enabled: false, factor: 0.45, windowSec: 1.2 }
+  zoom: { enabled: false, maxScale: 1.12 }
+captions:
+  requiredHashtags: ["#CNPLclips"]      # case-sensitive "exactly as written"
+  requiredMentions: ["@officialcnpl"]
+  extraHashtags: ["#pickleball"]
+  maxHashtags: 6
+  limits: { tiktok: 2000, instagram: 2000, youtubeTitle: 95, youtubeDescription: 4500 }
+  forbiddenWords: []
+voice:
+  tone: "positive, factual, energetic"
+  rules:
+    - "Positive only. No mocking players, officials or injuries."
+    - "No fake scores, invented stats, or misleading titles."
+    - "Do not claim anything not present in the provided facts."
+bans:
+  aiVoiceover: true
+  aiFootage: true
+  bakedMusic: true
+postingWindows:
+  - { tz: "America/Toronto", start: "18:00", end: "21:00" }
+fallbackHooks:
+  - "{hits} shots. Watch the finish."
+  - "Wait for the last shot."
+  - "This rally has everything."
+

@@ -1,0 +1,69 @@
+name: naya-yeira
+niche: music-promotion
+sources:
+  localDir: ./sources/naya-yeira
+  # Optional: download approved clips or your own source videos into {localDir}
+  # fetch: "yt-dlp -P {localDir} <url>"
+models: {}
+output:
+  aspect: "9:16"
+  width: 1080
+  height: 1920
+  fps: 30
+  minSeconds: 15
+  maxSeconds: 60
+  targetSeconds: [16, 28]
+  dropAtSec: 3.0         # 0-3s buildup, visual reveal/drop at ~3s, >=12s remaining
+  audio: mute            # MUST mute; attach official TikTok/IG sound in-app
+  loudnessLUFS: -14
+reframe:
+  mode: auto
+  allowBlurFill: false
+watermark:
+  file: null             # no watermark required
+  position: bottom-left
+  marginPct: { x: 4, bottom: 14 }
+  widthPct: 14
+  opacity: 1.0
+  fullDuration: true
+text:
+  hook:
+    enabled: true
+    maxChars: 65
+    topPct: 14
+    fontFile: null
+    fontSize: 72
+    durationSec: 3.0
+  counter: { enabled: false, label: "SHOT", minConfidence: 0.7 }
+  captions: { enabled: false }
+effects:
+  slowmo: { enabled: false, factor: 0.45, windowSec: 1.2 }
+  zoom: { enabled: false, maxScale: 1.12 }
+captions:
+  requiredHashtags: []
+  requiredMentions: []
+  platformMentions:
+    tiktok: ["@nayayeiraofficial"]
+    instagram: ["@nayayeira"]
+  requiredPhrases:
+    - "Hit Record — Naya Yeira"
+  extraHashtags: ["#NayaYeira", "#AlmostThere", "#AlternativeRnB"]
+  maxHashtags: 5
+  limits: { tiktok: 2000, instagram: 2000, youtubeTitle: 95, youtubeDescription: 4500 }
+  forbiddenWords: []
+voice:
+  tone: "authentic, reflective, music-discovery, emotionally resonant"
+  rules:
+    - "Connect the visual concept intentionally to the song, lyrics, or Naya Yeira's visual world."
+    - "Open with a strong 0-3s hook before the drop lands around 3s."
+    - "Do not invent facts or fake personal claims."
+bans:
+  aiVoiceover: true
+  aiFootage: true
+  bakedMusic: true
+postingWindows: []
+fallbackHooks:
+  - "POV: you found the artist before everyone else."
+  - "A song for when rock bottom starts becoming the beginning."
+  - "For anyone quietly rebuilding their life."
+  - "Nobody saw the beginning of this."
